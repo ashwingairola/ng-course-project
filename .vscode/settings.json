@@ -3,6 +3,6 @@
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.rulers": [80, 120],
-    "editor.insertSpaces": false,
-    "editor.detectIndentation": false
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false
 }
