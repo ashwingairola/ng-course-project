@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Recipe } from '../recipes/recipe.model';
 
 @Injectable()
@@ -17,11 +17,17 @@ export class RecipesService {
 		)
 	];
 
-	selectedRecipeId$: Subject<number> = new Subject();
+	private _selectedRecipeId$ = new BehaviorSubject<number | null>(null);
+
+	readonly selectedRecipeId$ = this._selectedRecipeId$.asObservable();
 
 	constructor() {}
 
 	get recipes(): Recipe[] {
 		return this._recipes.slice();
+	}
+
+	onSelectRecipe(id: number) {
+		this._selectedRecipeId$.next(id);
 	}
 }
