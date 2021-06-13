@@ -13,9 +13,7 @@ export class ShoppingListService {
 		.asObservable()
 		.pipe(map(ingredients => ingredients.slice()));
 
-	constructor() {}
-
-	fetchIngredients() {
+	constructor() {
 		this._ingredients$.next([
 			new Ingredient('Secret Formula', 1),
 			new Ingredient('Tomato Slice', 2),
@@ -26,6 +24,12 @@ export class ShoppingListService {
 	addIngredient(ingredient: Ingredient) {
 		const ingredients = this._ingredients$.getValue();
 		ingredients.push(ingredient);
+		this._ingredients$.next(ingredients);
+	}
+
+	addIngredients(newIngredients: Ingredient[]) {
+		const ingredients = this._ingredients$.getValue();
+		ingredients.push(...newIngredients);
 		this._ingredients$.next(ingredients);
 	}
 }

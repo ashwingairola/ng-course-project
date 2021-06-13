@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Recipe } from '../recipes/recipe.model';
 import { Ingredient } from '../shared/ingredient.model';
+import { ShoppingListService } from './shopping-list.service';
 
-@Injectable()
+@Injectable({
+	providedIn: 'root'
+})
 export class RecipesService {
 	private _recipes: Recipe[] = [
 		new Recipe(
@@ -36,7 +39,7 @@ export class RecipesService {
 
 	readonly selectedRecipeId$ = this._selectedRecipeId$.asObservable();
 
-	constructor() {}
+	constructor(private shoppingListService: ShoppingListService) {}
 
 	get recipes(): Recipe[] {
 		return this._recipes.slice();
@@ -44,5 +47,9 @@ export class RecipesService {
 
 	onSelectRecipe(id: number) {
 		this._selectedRecipeId$.next(id);
+	}
+
+	addIngredientsToShoppingList(recipe: Recipe) {
+		this.shoppingListService.addIngredients(recipe.ingredients);
 	}
 }

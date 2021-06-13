@@ -15,9 +15,7 @@ export class ShoppingListComponent implements OnInit {
 		this.ingredients$ = this.shoppingListService.ingredients$;
 	}
 
-	ngOnInit(): void {
-		this.shoppingListService.fetchIngredients();
-	}
+	ngOnInit(): void {}
 
 	onIngredientAdded(ingredient: Ingredient) {
 		this.shoppingListService.addIngredient(ingredient);
