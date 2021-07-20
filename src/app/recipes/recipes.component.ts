@@ -1,9 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { noop, Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { RecipesService } from '../services/recipes.service';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 
+import { RecipesService } from '../services/recipes.service';
 import { Recipe } from './recipe.model';
 
 @Component({
@@ -14,10 +12,7 @@ import { Recipe } from './recipe.model';
 export class RecipesComponent implements OnInit {
 	recipes$?: Observable<Recipe[]>;
 
-	constructor(
-		private route: ActivatedRoute,
-		private recipeService: RecipesService
-	) {}
+	constructor(private recipeService: RecipesService) {}
 
 	ngOnInit(): void {
 		this.recipes$ = this.recipeService.getRecipes();
