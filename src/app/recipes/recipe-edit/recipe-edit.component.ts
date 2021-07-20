@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { delay, map, takeUntil, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-recipe-edit',
@@ -17,12 +17,11 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.route.paramMap
-			.pipe(delay(3000), takeUntil(this.destroySubject$))
+			.pipe(takeUntil(this.destroySubject$))
 			.subscribe(params => {
 				const id = params.get('id');
 				this.recipeId = id ? +id : null;
 				this.editMode = id !== null;
-				console.log(this.recipeId, this.editMode);
 			});
 	}
 

@@ -33,7 +33,9 @@
 					<li>
 						<a (click)="onAddToShoppingList()">To Shopping List</a>
 					</li>
-					<li><a>Edit Recipe</a></li>
+					<li>
+						<a [routerLink]="['/recipes', recipe.id, 'edit']">Edit Recipe</a>
+					</li>
 					<li><a>Delete Recipe</a></li>
 				</ul>
 			</div>
