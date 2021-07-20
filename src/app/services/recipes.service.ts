@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Recipe } from '../recipes/recipe.model';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from './shopping-list.service';
@@ -35,18 +36,18 @@ export class RecipesService {
 		)
 	];
 
-	private _selectedRecipeId$ = new BehaviorSubject<number | null>(null);
-
-	readonly selectedRecipeId$ = this._selectedRecipeId$.asObservable();
+	private _recipes$ = new BehaviorSubject<Recipe[]>(this._recipes);
 
 	constructor(private shoppingListService: ShoppingListService) {}
 
-	get recipes(): Recipe[] {
-		return this._recipes.slice();
+	getRecipes(): Observable<Recipe[]> {
+		return this._recipes$.asObservable().pipe(map(recipes => recipes.slice()));
 	}
 
-	onSelectRecipe(id: number) {
-		this._selectedRecipeId$.next(id);
+	getRecipe(id: number): Observable<Recipe | null> {
+		return this._recipes$.pipe(
+			map(recipes => recipes.find(recipe => recipe.id === id) || null)
+		);
 	}
 
 	addIngredientsToShoppingList(recipe: Recipe) {

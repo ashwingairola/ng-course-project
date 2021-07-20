@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { noop, Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { noop, Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { RecipesService } from '../services/recipes.service';
 
 import { Recipe } from './recipe.model';
@@ -9,32 +11,16 @@ import { Recipe } from './recipe.model';
 	templateUrl: './recipes.component.html',
 	styleUrls: ['./recipes.component.css']
 })
-export class RecipesComponent implements OnInit, OnDestroy {
-	recipes: Recipe[] = [];
-	selectedRecipe?: Recipe | null;
+export class RecipesComponent implements OnInit {
+	recipes$?: Observable<Recipe[]>;
 
-	private recipeSub?: Subscription;
-
-	constructor(private recipeService: RecipesService) {}
+	constructor(
+		private route: ActivatedRoute,
+		private recipeService: RecipesService
+	) {}
 
 	ngOnInit(): void {
-		this.recipes = this.recipeService.recipes;
-		this.selectedRecipe = this.recipes[0];
-
-		this.recipeSub = this.recipeService.selectedRecipeId$.subscribe(
-			recipeId => {
-				this.selectedRecipe = this.recipes.find(
-					recipe => recipe.id === recipeId
-				);
-			},
-			noop
-		);
-	}
-
-	ngOnDestroy() {
-		if (this.recipeSub) {
-			this.recipeSub.unsubscribe();
-		}
+		this.recipes$ = this.recipeService.getRecipes();
 	}
 
 	onClickAddToShoppingList(recipe: Recipe) {
