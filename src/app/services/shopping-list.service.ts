@@ -31,10 +31,11 @@ export class ShoppingListService {
 		]);
 	}
 
-	addIngredient(ingredient: Ingredient) {
+	addIngredient(ingredient: Ingredient): boolean {
 		const ingredients = this._ingredients$.getValue();
 		ingredients.push(ingredient);
 		this._ingredients$.next(ingredients);
+		return true;
 	}
 
 	addIngredients(newIngredients: Ingredient[]) {
@@ -45,5 +46,20 @@ export class ShoppingListService {
 
 	selectIngredientForEdit(ingredientId: number) {
 		this._selectedIngredient$.next(ingredientId);
+	}
+
+	updateIngredient(ingredientId: number, newIngredient: Ingredient): boolean {
+		const ingredients = this._ingredients$.value;
+		const ingredientToUpdate = ingredients.find(i => i.id === ingredientId);
+
+		if (ingredientToUpdate) {
+			const index = ingredients.indexOf(ingredientToUpdate);
+			ingredients[index] = newIngredient;
+			this._ingredients$.next(ingredients);
+			this._selectedIngredient$.next(null);
+			return true;
+		}
+
+		return false;
 	}
 }
