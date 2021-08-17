@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, withLatestFrom } from 'rxjs/operators';
 import { Ingredient } from '../shared/ingredient.model';
 
 @Injectable({
@@ -8,10 +8,20 @@ import { Ingredient } from '../shared/ingredient.model';
 })
 export class ShoppingListService {
 	private _ingredients$ = new BehaviorSubject<Ingredient[]>([]);
+	private _selectedIngredient$ = new BehaviorSubject<number | null>(null);
 
 	readonly ingredients$ = this._ingredients$
 		.asObservable()
 		.pipe(map(ingredients => ingredients.slice()));
+
+	readonly selectedIngredient$: Observable<Ingredient | null> =
+		this._selectedIngredient$.asObservable().pipe(
+			withLatestFrom(this._ingredients$),
+			map(([ingredientId, ingredients]) => {
+				const ingredient = ingredients.find(i => i.id === ingredientId);
+				return ingredient ? { ...ingredient } : null;
+			})
+		);
 
 	constructor() {
 		this._ingredients$.next([
@@ -31,5 +41,9 @@ export class ShoppingListService {
 		const ingredients = this._ingredients$.getValue();
 		ingredients.push(...newIngredients);
 		this._ingredients$.next(ingredients);
+	}
+
+	selectIngredientForEdit(ingredientId: number) {
+		this._selectedIngredient$.next(ingredientId);
 	}
 }

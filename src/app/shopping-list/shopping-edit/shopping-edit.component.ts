@@ -1,12 +1,8 @@
-import {
-	Component,
-	ElementRef,
-	EventEmitter,
-	OnInit,
-	Output,
-	ViewChild
-} from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { shareReplay, takeUntil } from 'rxjs/operators';
+
+import { ShoppingListService } from 'src/app/services/shopping-list.service';
 import { Ingredient } from 'src/app/shared/ingredient.model';
 
 @Component({
@@ -14,23 +10,39 @@ import { Ingredient } from 'src/app/shared/ingredient.model';
 	templateUrl: './shopping-edit.component.html',
 	styleUrls: ['./shopping-edit.component.css']
 })
-export class ShoppingEditComponent implements OnInit {
-	@Output() ingredientAdded = new EventEmitter<Ingredient>();
-
+export class ShoppingEditComponent implements OnInit, OnDestroy {
 	formModel = {
 		name: '',
 		amount: 0
 	};
+	editMode = false;
 
-	constructor() {}
+	selectedIngredient$: Observable<Ingredient | null> =
+		this.shoppingListService.selectedIngredient$;
 
-	ngOnInit(): void {}
+	private _destroy$ = new Subject<void>();
+
+	constructor(private shoppingListService: ShoppingListService) {}
+
+	ngOnInit(): void {
+		this.selectedIngredient$
+			.pipe(takeUntil(this._destroy$), shareReplay())
+			.subscribe(ingredient => {
+				if (ingredient) {
+					this.editMode = true;
+				}
+			});
+	}
+
+	ngOnDestroy() {
+		this._destroy$.next();
+	}
 
 	onAddItem() {
 		const ingredient = new Ingredient(
 			this.formModel.name,
 			this.formModel.amount
 		);
-		this.ingredientAdded.emit(ingredient);
+		this.shoppingListService.addIngredient(ingredient);
 	}
 }
