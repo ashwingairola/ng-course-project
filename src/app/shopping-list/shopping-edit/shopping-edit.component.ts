@@ -30,6 +30,10 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 			.subscribe(ingredient => {
 				if (ingredient) {
 					this.editMode = true;
+					this.formModel = {
+						name: ingredient.name,
+						amount: ingredient.amount
+					};
 				}
 			});
 	}
