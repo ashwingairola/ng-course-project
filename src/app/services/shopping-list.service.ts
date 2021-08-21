@@ -62,4 +62,12 @@ export class ShoppingListService {
 
 		return false;
 	}
+
+	deleteIngredient(ingredientId: number) {
+		let ingredients = this._ingredients$.value;
+		ingredients = ingredients.filter(
+			ingredient => ingredient.id !== ingredientId
+		);
+		this._ingredients$.next(ingredients);
+	}
 }
