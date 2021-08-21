@@ -67,4 +67,8 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 			this.ingredientForm.reset();
 		}
 	}
+
+	onReset() {
+		this.ingredientForm.reset();
+	}
 }
