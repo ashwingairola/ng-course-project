@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { EMPTY, Observable, of, Subject } from 'rxjs';
-import { map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { RecipesService } from 'src/app/services/recipes.service';
 import { Recipe } from '../recipe.model';
 
@@ -23,6 +23,10 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 	recipeForm = new FormGroup({});
 
+	get ingredientControls() {
+		return this.recipeForm.get('ingredients') as FormArray;
+	}
+
 	ngOnInit(): void {
 		this.route.paramMap
 			.pipe(
@@ -30,11 +34,12 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 				map(params => {
 					const id = params.get('id');
 					const recipeId = id ? +id : null;
-
 					return recipeId;
 				}),
 				switchMap(recipeId => {
-					return recipeId ? this.recipesService.getRecipe(recipeId) : of(null);
+					return typeof recipeId === 'number'
+						? this.recipesService.getRecipe(recipeId)
+						: of(null);
 				})
 			)
 			.subscribe(recipe => {
@@ -60,6 +65,16 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 			),
 			description: new FormControl(
 				this.editMode ? this.selectedRecipe?.description : ''
+			),
+			ingredients: new FormArray(
+				this.editMode && this.selectedRecipe
+					? this.selectedRecipe.ingredients.map(i => {
+							return new FormGroup({
+								name: new FormControl(i.name),
+								amount: new FormControl(i.amount)
+							});
+					  })
+					: []
 			)
 		});
 	}
