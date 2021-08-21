@@ -53,6 +53,15 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		this.destroySubject$.next();
 	}
 
+	onAddIngredient() {
+		this.ingredientControls.controls.push(
+			new FormGroup({
+				name: new FormControl(),
+				amount: new FormControl()
+			})
+		);
+	}
+
 	onSubmit() {
 		console.log(this.recipeForm);
 	}
