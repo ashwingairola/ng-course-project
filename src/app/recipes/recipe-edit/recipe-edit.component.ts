@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { RecipesService } from 'src/app/services/recipes.service';
@@ -15,6 +15,7 @@ import { Recipe } from '../recipe.model';
 export class RecipeEditComponent implements OnInit, OnDestroy {
 	constructor(
 		private route: ActivatedRoute,
+		private router: Router,
 		private recipesService: RecipesService
 	) {}
 
@@ -88,6 +89,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		} else {
 			this.recipesService.addRecipe(newRecipe);
 		}
+
+		this.router.navigate(['..'], { relativeTo: this.route });
 	}
 
 	private initForm() {

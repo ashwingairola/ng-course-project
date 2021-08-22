@@ -73,4 +73,10 @@ export class RecipesService {
 
 		return false;
 	}
+
+	deleteRecipe(recipeId: number) {
+		let recipes = this._recipes$.getValue();
+		recipes = recipes.filter(recipe => recipe.id !== recipeId);
+		this._recipes$.next(recipes);
+	}
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+
 import { RecipesService } from 'src/app/services/recipes.service';
 import { Recipe } from '../recipe.model';
 
@@ -35,5 +36,9 @@ export class RecipeDetailComponent implements OnInit {
 
 	onAddToShoppingList() {
 		// this.toShoppingListClicked.emit(this.recipe);
+	}
+
+	onDelete(recipeId: number) {
+		this.recipeService.deleteRecipe(recipeId);
 	}
 }
