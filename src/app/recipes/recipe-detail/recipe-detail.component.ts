@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -14,6 +14,7 @@ import { Recipe } from '../recipe.model';
 export class RecipeDetailComponent implements OnInit {
 	constructor(
 		private route: ActivatedRoute,
+		private router: Router,
 		private recipeService: RecipesService
 	) {}
 
@@ -40,5 +41,6 @@ export class RecipeDetailComponent implements OnInit {
 
 	onDelete(recipeId: number) {
 		this.recipeService.deleteRecipe(recipeId);
+		this.router.navigate(['/recipes']);
 	}
 }
