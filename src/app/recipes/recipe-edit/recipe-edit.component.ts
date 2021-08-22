@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
@@ -54,10 +54,13 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	}
 
 	onAddIngredient() {
-		this.ingredientControls.controls.push(
+		this.ingredientControls.push(
 			new FormGroup({
-				name: new FormControl(),
-				amount: new FormControl()
+				name: new FormControl(null, Validators.required),
+				amount: new FormControl(null, [
+					Validators.required,
+					Validators.pattern(/^[1-9]+[0-9]*$/)
+				])
 			})
 		);
 	}
@@ -68,19 +71,27 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
 	private initForm() {
 		this.recipeForm = new FormGroup({
-			name: new FormControl(this.editMode ? this.selectedRecipe?.name : ''),
+			name: new FormControl(
+				this.editMode ? this.selectedRecipe?.name : '',
+				Validators.required
+			),
 			imgUrl: new FormControl(
-				this.editMode ? this.selectedRecipe?.imagePath : ''
+				this.editMode ? this.selectedRecipe?.imagePath : '',
+				Validators.required
 			),
 			description: new FormControl(
-				this.editMode ? this.selectedRecipe?.description : ''
+				this.editMode ? this.selectedRecipe?.description : '',
+				Validators.required
 			),
 			ingredients: new FormArray(
 				this.editMode && this.selectedRecipe
 					? this.selectedRecipe.ingredients.map(i => {
 							return new FormGroup({
-								name: new FormControl(i.name),
-								amount: new FormControl(i.amount)
+								name: new FormControl(i.name, Validators.required),
+								amount: new FormControl(i.amount, [
+									Validators.required,
+									Validators.pattern(/^[1-9]+[0-9]*$/)
+								])
 							});
 					  })
 					: []
