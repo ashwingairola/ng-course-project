@@ -53,4 +53,24 @@ export class RecipesService {
 	addIngredientsToShoppingList(recipe: Recipe) {
 		this.shoppingListService.addIngredients(recipe.ingredients);
 	}
+
+	addRecipe(recipe: Recipe) {
+		const recipes = this._recipes$.getValue();
+		recipes.push(recipe);
+		this._recipes$.next(recipes);
+	}
+
+	updateRecipe(recipeId: number, newRecipe: Recipe): boolean {
+		const recipes = this._recipes$.getValue();
+		const recipeToUpdate = recipes.find(recipe => recipe.id === recipeId);
+
+		if (recipeToUpdate) {
+			const index = recipes.indexOf(recipeToUpdate);
+			recipes[index] = newRecipe;
+			this._recipes$.next(recipes);
+			return true;
+		}
+
+		return false;
+	}
 }

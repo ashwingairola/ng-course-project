@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { RecipesService } from 'src/app/services/recipes.service';
+import { Ingredient } from 'src/app/shared/ingredient.model';
 import { Recipe } from '../recipe.model';
 
 @Component({
@@ -66,7 +67,27 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	}
 
 	onSubmit() {
-		console.log(this.recipeForm);
+		const {
+			name,
+			description,
+			imgUrl,
+			ingredients: ingredientValues
+		}: {
+			name: string;
+			description: string;
+			imgUrl: string;
+			ingredients: { name: string; amount: number }[];
+		} = this.recipeForm.value;
+		const ingredients = ingredientValues?.length
+			? ingredientValues.map(i => new Ingredient(i.name, i.amount))
+			: [];
+
+		const newRecipe = new Recipe(name, description, imgUrl, ingredients);
+		if (this.editMode && this.selectedRecipe) {
+			this.recipesService.updateRecipe(this.selectedRecipe?.id, newRecipe);
+		} else {
+			this.recipesService.addRecipe(newRecipe);
+		}
 	}
 
 	private initForm() {
