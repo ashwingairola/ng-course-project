@@ -3,6 +3,7 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
+
 import { RecipesService } from 'src/app/services/recipes.service';
 import { Ingredient } from 'src/app/shared/ingredient.model';
 import { Recipe } from '../recipe.model';
@@ -65,6 +66,10 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 				])
 			})
 		);
+	}
+
+	onDeleteIngredient(index: number) {
+		this.ingredientControls.removeAt(index);
 	}
 
 	onSubmit() {
