@@ -50,6 +50,10 @@ export class RecipesService {
 		);
 	}
 
+	setRecipes(recipes: Recipe[]) {
+		this._recipes$.next(recipes);
+	}
+
 	addIngredientsToShoppingList(recipe: Recipe) {
 		this.shoppingListService.addIngredients(recipe.ingredients);
 	}
