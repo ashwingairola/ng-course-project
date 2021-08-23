@@ -11,6 +11,7 @@
 					ngModel
 					required
 					minlength="6"
+					[disabled]="authStatus === 'pending'"
 				/>
 			</div>
 			<div class="form-group">
@@ -22,21 +23,35 @@
 					class="form-control"
 					ngModel
 					required
+					[disabled]="authStatus === 'pending'"
 				/>
 			</div>
 			<div>
 				<button
 					type="submit"
 					class="btn btn-primary"
-					[disabled]="authForm.invalid"
+					[disabled]="authForm.invalid || authStatus === 'pending'"
 				>
-					{{ isLoginMode ? 'Login' : 'Sign Up' }}
+					<ng-container *ngIf="authStatus !== 'pending'; else authLoading">
+						{{ isLoginMode ? 'Login' : 'Sign Up' }}
+					</ng-container>
+					<ng-template #authLoading>
+						<app-loading-spinner></app-loading-spinner>
+					</ng-template>
 				</button>
 				|
-				<button type="button" class="btn btn-primary" (click)="onSwitchMode()">
+				<button
+					type="button"
+					class="btn btn-primary"
+					(click)="onSwitchMode()"
+					[disabled]="authStatus === 'pending'"
+				>
 					Switch to {{ isLoginMode ? 'Sign Up' : 'Login' }}
 				</button>
 			</div>
 		</form>
+		<div class="alert alert-danger" *ngIf="authError">
+			{{ authError }}
+		</div>
 	</div>
 </div>

@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { noop } from 'rxjs';
 
 import { AuthService } from '../../../../services/api/auth.service';
 
@@ -15,6 +14,8 @@ export class AuthComponent implements OnInit {
 	constructor(private authService: AuthService) {}
 
 	isLoginMode = true;
+	authStatus: 'idle' | 'pending' | 'rejected' | 'fulfilled' = 'idle';
+	authError: string | null = null;
 
 	ngOnInit(): void {}
 
@@ -33,10 +34,18 @@ export class AuthComponent implements OnInit {
 		if (this.isLoginMode) {
 			return;
 		} else {
-			this.authService.signUp(email, password).subscribe(response => {
-				console.log(response);
-				this.authForm.reset();
-			}, noop);
+			this.authStatus = 'pending';
+			this.authService.signUp(email, password).subscribe(
+				response => {
+					console.log(response);
+					this.authForm.reset();
+					this.authStatus = 'fulfilled';
+				},
+				() => {
+					this.authStatus = 'rejected';
+					this.authError = 'An error occurred.';
+				}
+			);
 		}
 	}
 }
