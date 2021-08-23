@@ -8,5 +8,11 @@ import { Component, OnInit } from '@angular/core';
 export class AuthComponent implements OnInit {
 	constructor() {}
 
+	isLoginMode = true;
+
 	ngOnInit(): void {}
+
+	onSwitchMode() {
+		this.isLoginMode = !this.isLoginMode;
+	}
 }
