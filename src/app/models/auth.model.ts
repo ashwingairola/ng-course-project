@@ -6,12 +6,13 @@ export enum EAuthError {
 	WEAK_PASSWORD = 'WEAK_PASSWORD : Password should be at least 6 characters'
 }
 
-export interface ISignupResponse {
+export interface IAuthResponse {
 	idToken: string;
 	email: string;
 	refreshToken: string;
 	expiresIn: string;
 	localId: string;
+	registered?: boolean;
 }
 
 export interface IAuthError {

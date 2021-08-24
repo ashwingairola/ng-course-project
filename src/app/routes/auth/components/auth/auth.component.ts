@@ -1,8 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Observable } from 'rxjs';
 
-import { EAuthError } from '@models';
+import { EAuthError, IAuthResponse } from '@models';
 import { AuthService } from '../../../../services/api/auth.service';
 
 @Component({
@@ -34,28 +35,27 @@ export class AuthComponent implements OnInit {
 		const email = this.authForm.value.email;
 		const password = this.authForm.value.password;
 
-		if (this.isLoginMode) {
-			return;
-		} else {
-			this.authStatus = 'pending';
-			this.authService.signUp(email, password).subscribe(
-				response => {
-					console.log(response);
-					this.authForm.reset();
-					this.authStatus = 'fulfilled';
-				},
-				error => {
-					this.authStatus = 'rejected';
+		const auth$: Observable<IAuthResponse> = this.isLoginMode
+			? this.authService.login(email, password)
+			: this.authService.signUp(email, password);
 
-					if (error instanceof HttpErrorResponse) {
-						const errorMessage =
-							error.error.error?.message || EAuthError.DEFAULT;
-						this.authError = errorMessage;
-					} else {
-						this.authError = EAuthError.DEFAULT;
-					}
+		this.authStatus = 'pending';
+		auth$.subscribe(
+			response => {
+				console.log(response);
+				this.authForm.reset();
+				this.authStatus = 'fulfilled';
+			},
+			error => {
+				this.authStatus = 'rejected';
+
+				if (error instanceof HttpErrorResponse) {
+					const errorMessage = error.error.error?.message || EAuthError.DEFAULT;
+					this.authError = errorMessage;
+				} else {
+					this.authError = EAuthError.DEFAULT;
 				}
-			);
-		}
+			}
+		);
 	}
 }
