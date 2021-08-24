@@ -1,6 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { EAuthError } from '@models';
 import { AuthService } from '../../../../services/api/auth.service';
 
 @Component({
@@ -15,7 +17,8 @@ export class AuthComponent implements OnInit {
 
 	isLoginMode = true;
 	authStatus: 'idle' | 'pending' | 'rejected' | 'fulfilled' = 'idle';
-	authError: string | null = null;
+	authError: EAuthError | null = null;
+	authErrorTypes: typeof EAuthError = EAuthError;
 
 	ngOnInit(): void {}
 
@@ -41,9 +44,16 @@ export class AuthComponent implements OnInit {
 					this.authForm.reset();
 					this.authStatus = 'fulfilled';
 				},
-				() => {
+				error => {
 					this.authStatus = 'rejected';
-					this.authError = 'An error occurred.';
+
+					if (error instanceof HttpErrorResponse) {
+						const errorMessage =
+							error.error.error?.message || EAuthError.DEFAULT;
+						this.authError = errorMessage;
+					} else {
+						this.authError = EAuthError.DEFAULT;
+					}
 				}
 			);
 		}

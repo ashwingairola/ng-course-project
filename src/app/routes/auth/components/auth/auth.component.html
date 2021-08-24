@@ -50,8 +50,28 @@
 				</button>
 			</div>
 		</form>
-		<div class="alert alert-danger" *ngIf="authError">
-			{{ authError }}
-		</div>
+		<ng-container
+			[ngTemplateOutlet]="authErrorAlert"
+			*ngIf="authError"
+		></ng-container>
 	</div>
 </div>
+
+<ng-template #authErrorAlert>
+	<div class="alert alert-danger">
+		<strong>Error: </strong>
+		<span [ngSwitch]="authError">
+			<ng-container *ngSwitchCase="authErrorTypes.EMAIL_EXISTS">
+				The email address is already in use by another account.
+			</ng-container>
+			<ng-container *ngSwitchCase="authErrorTypes.OPERATION_NOT_ALLOWED">
+				Password sign-in is disabled.
+			</ng-container>
+			<ng-container *ngSwitchCase="authErrorTypes.TOO_MANY_ATTEMPTS_TRY_LATER">
+				We have blocked all requests from this device due to unusual activity.
+				Try again later.
+			</ng-container>
+			<ng-container *ngSwitchDefault> An error occurred.</ng-container>
+		</span>
+	</div>
+</ng-template>
