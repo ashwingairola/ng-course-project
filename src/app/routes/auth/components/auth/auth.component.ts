@@ -46,15 +46,9 @@ export class AuthComponent implements OnInit {
 				this.authForm.reset();
 				this.authStatus = 'fulfilled';
 			},
-			error => {
+			(error: EAuthError) => {
 				this.authStatus = 'rejected';
-
-				if (error instanceof HttpErrorResponse) {
-					const errorMessage = error.error.error?.message || EAuthError.DEFAULT;
-					this.authError = errorMessage;
-				} else {
-					this.authError = EAuthError.DEFAULT;
-				}
+				this.authError = error;
 			}
 		);
 	}
