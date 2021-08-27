@@ -1,10 +1,10 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { EAuthError, IAuthResponse } from '@models';
-import { AuthService } from '../../../../services/api/auth.service';
+import { EAuthError, IAuthResponse } from 'src/app/shared/auth/models';
+import { AuthService } from 'src/app/shared/auth/services/auth.service';
 
 @Component({
 	selector: 'app-auth',
@@ -14,7 +14,7 @@ import { AuthService } from '../../../../services/api/auth.service';
 export class AuthComponent implements OnInit {
 	@ViewChild('authForm') authForm!: NgForm;
 
-	constructor(private authService: AuthService) {}
+	constructor(private router: Router, private authService: AuthService) {}
 
 	isLoginMode = true;
 	authStatus: 'idle' | 'pending' | 'rejected' | 'fulfilled' = 'idle';
@@ -41,10 +41,11 @@ export class AuthComponent implements OnInit {
 
 		this.authStatus = 'pending';
 		auth$.subscribe(
-			response => {
-				console.log(response);
+			() => {
 				this.authForm.reset();
 				this.authStatus = 'fulfilled';
+				this.authError = null;
+				this.router.navigate(['/']);
 			},
 			(error: EAuthError) => {
 				this.authStatus = 'rejected';

@@ -69,7 +69,8 @@
 							"browserTarget": "course-project:build:production"
 						},
 						"development": {
-							"browserTarget": "course-project:build:development"
+							"browserTarget": "course-project:build:development",
+							"proxyConfig": "src/proxy.conf.json"
 						}
 					},
 					"defaultConfiguration": "development"

@@ -5,17 +5,19 @@ import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.com
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
 import { RecipesComponent } from './recipes/recipes.component';
+import { AuthGuard } from './shared/auth/guards/auth.guard';
 import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 
 const routes: Routes = [
 	{
-		path: 'auth',
+		path: 'authenticate',
 		loadChildren: () =>
 			import('./routes/auth/auth.module').then(m => m.AuthModule)
 	},
 	{
 		path: 'recipes',
 		component: RecipesComponent,
+		canActivate: [AuthGuard],
 		children: [
 			{ path: '', component: RecipeStartComponent },
 			{ path: 'new', component: RecipeEditComponent },

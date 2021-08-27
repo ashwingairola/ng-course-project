@@ -1,0 +1,11 @@
+{
+	"/auth/": {
+		"target": "https://identitytoolkit.googleapis.com",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/auth/signUp": "v1/accounts:signUp",
+			"^/auth/login": "v1/accounts:signInWithPassword"
+		}
+	}
+}

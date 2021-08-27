@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { noop } from 'rxjs';
 import { DataStorageService } from '../services/api/data-storage.service';
+import { AuthService } from '../shared/auth/services/auth.service';
 
 @Component({
 	selector: 'app-header',
@@ -8,7 +9,12 @@ import { DataStorageService } from '../services/api/data-storage.service';
 	styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-	constructor(private dataStorageService: DataStorageService) {}
+	constructor(
+		private dataStorageService: DataStorageService,
+		private authService: AuthService
+	) {}
+
+	isAuthenticated$ = this.authService.user$;
 
 	ngOnInit(): void {}
 
@@ -20,5 +26,9 @@ export class HeaderComponent implements OnInit {
 
 	onFetchData() {
 		this.dataStorageService.fetchRecipes().subscribe(noop, noop);
+	}
+
+	onLogout() {
+		this.authService.logout();
 	}
 }
