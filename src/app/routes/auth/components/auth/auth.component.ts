@@ -1,10 +1,20 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+	Component,
+	ComponentFactoryResolver,
+	Injector,
+	OnInit,
+	TemplateRef,
+	ViewChild
+} from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { EAuthError, IAuthResponse } from 'src/app/shared/auth/models';
 import { AuthService } from 'src/app/shared/auth/services/auth.service';
+import { PlaceholderDirective } from 'src/app/modules/shared/directives/placeholder.directive';
+import { AlertComponent } from 'src/app/modules/UI/alert/components/alert/alert.component';
+import { take } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-auth',
@@ -13,8 +23,15 @@ import { AuthService } from 'src/app/shared/auth/services/auth.service';
 })
 export class AuthComponent implements OnInit {
 	@ViewChild('authForm') authForm!: NgForm;
+	@ViewChild(PlaceholderDirective) alertHost!: PlaceholderDirective;
+	@ViewChild('authErrorAlert') alertContent!: TemplateRef<any>;
 
-	constructor(private router: Router, private authService: AuthService) {}
+	constructor(
+		private componentFactoryResolver: ComponentFactoryResolver,
+		private injector: Injector,
+		private router: Router,
+		private authService: AuthService
+	) {}
 
 	isLoginMode = true;
 	authStatus: 'idle' | 'pending' | 'rejected' | 'fulfilled' = 'idle';
@@ -50,11 +67,30 @@ export class AuthComponent implements OnInit {
 			(error: EAuthError) => {
 				this.authStatus = 'rejected';
 				this.authError = error;
+				this.onShowAlert();
 			}
 		);
 	}
 
-	onHandleError() {
-		this.authError = null;
+	// onHandleError() {
+	// 	this.authError = null;
+	// }
+
+	onShowAlert() {
+		const alertComponentFactory =
+			this.componentFactoryResolver.resolveComponentFactory(AlertComponent);
+		const hostViewContainerRef = this.alertHost.viewContainerRef;
+		hostViewContainerRef.clear();
+		const alertComponentRef = hostViewContainerRef.createComponent(
+			alertComponentFactory,
+			0,
+			this.injector,
+			[this.alertContent.createEmbeddedView(null).rootNodes]
+		);
+
+		alertComponentRef.instance.hide.pipe(take(1)).subscribe(() => {
+			this.authError = null;
+			hostViewContainerRef.clear();
+		});
 	}
 }

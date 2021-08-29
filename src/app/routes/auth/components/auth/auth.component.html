@@ -55,7 +55,7 @@
 			*ngIf="authError"
 		></ng-container> -->
 
-		<app-alert *ngIf="authError" (hide)="onHandleError()">
+		<!-- <app-alert *ngIf="authError" (hide)="onHandleError()">
 			<div>
 				<strong>Error: </strong>
 				<span [ngSwitch]="authError">
@@ -83,13 +83,16 @@
 					<ng-container *ngSwitchDefault> An error occurred.</ng-container>
 				</span>
 			</div>
-		</app-alert>
+		</app-alert> -->
 	</div>
 </div>
 
+<ng-template appPlaceholder></ng-template>
+
 <ng-template #authErrorAlert>
-	<div class="alert alert-danger">
+	<div>
 		<strong>Error: </strong>
+		<strong>Some s {{ authError }}</strong>
 		<span [ngSwitch]="authError">
 			<ng-container *ngSwitchCase="authErrorTypes.EMAIL_EXISTS">
 				The email address is already in use by another account.

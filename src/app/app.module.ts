@@ -17,7 +17,6 @@ import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.compon
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 import { AuthInterceptor } from './shared/auth/interceptors/auth.interceptor';
 import { AuthModule } from './shared/auth/auth.module';
-
 @NgModule({
 	declarations: [
 		AppComponent,
