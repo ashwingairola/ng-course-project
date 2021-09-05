@@ -10,8 +10,8 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { EAuthError, IAuthResponse } from 'src/app/shared/auth/models';
-import { AuthService } from 'src/app/shared/auth/services/auth.service';
+import { EAuthError, IAuthResponse } from 'src/app/modules/auth/models';
+import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { PlaceholderDirective } from 'src/app/modules/shared/directives/placeholder.directive';
 import { AlertComponent } from 'src/app/modules/UI/alert/components/alert/alert.component';
 import { take } from 'rxjs/operators';
