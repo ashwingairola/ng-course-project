@@ -23,13 +23,7 @@ export class ShoppingListService {
 			})
 		);
 
-	constructor() {
-		this._ingredients$.next([
-			new Ingredient('Secret Formula', 1),
-			new Ingredient('Tomato Slice', 2),
-			new Ingredient('Cheese Slice', 2)
-		]);
-	}
+	constructor() {}
 
 	addIngredient(ingredient: Ingredient): boolean {
 		const ingredients = this._ingredients$.getValue();
