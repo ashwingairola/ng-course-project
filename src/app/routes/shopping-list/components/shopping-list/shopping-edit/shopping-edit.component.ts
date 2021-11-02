@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { shareReplay, takeUntil } from 'rxjs/operators';
 
 import { ShoppingListService } from 'src/app/routes/shopping-list/services/shopping-list.service';
@@ -52,25 +52,22 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 			this.formModel.amount
 		);
 
-		let result = false;
-
 		if (this.editMode && this.selectedIngredient) {
-			result = this.shoppingListService.updateIngredient(
+			this.shoppingListService.updateIngredient(
 				this.selectedIngredient.id,
 				ingredient
 			);
 		} else {
-			result = this.shoppingListService.addIngredient(ingredient);
+			this.shoppingListService.addIngredient(ingredient);
 		}
 
-		if (result) {
-			this.onReset();
-		}
+		this.onReset();
 	}
 
 	onReset() {
 		this.ingredientForm.reset();
 		this.editMode = false;
+		this.shoppingListService.clearSelectedIngredient();
 	}
 
 	onDelete() {

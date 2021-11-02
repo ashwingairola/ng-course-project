@@ -1,67 +1,54 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { AppState } from 'src/app/models/state.model';
 import { Ingredient } from '../../../models/ingredient.model';
+import * as shoppingListActions from '../store/actions/shopping-list.actions';
+import {
+	selectIngredients,
+	selectSelectedIngredient
+} from '../store/selectors/shopping-list.selectors';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class ShoppingListService {
-	private _ingredients$ = new BehaviorSubject<Ingredient[]>([]);
-	private _selectedIngredient$ = new BehaviorSubject<number | null>(null);
-
-	readonly ingredients$ = this._ingredients$
-		.asObservable()
-		.pipe(map(ingredients => ingredients.slice()));
+	readonly ingredients$ = this.store.select(selectIngredients);
 
 	readonly selectedIngredient$: Observable<Ingredient | null> =
-		this._selectedIngredient$.asObservable().pipe(
-			withLatestFrom(this._ingredients$),
-			map(([ingredientId, ingredients]) => {
-				const ingredient = ingredients.find(i => i.id === ingredientId);
-				return ingredient ? { ...ingredient } : null;
-			})
-		);
+		this.store.select(selectSelectedIngredient);
 
-	constructor() {}
+	constructor(private store: Store<AppState>) {}
 
-	addIngredient(ingredient: Ingredient): boolean {
-		const ingredients = this._ingredients$.getValue();
-		ingredients.push(ingredient);
-		this._ingredients$.next(ingredients);
-		return true;
+	addIngredient(ingredient: Ingredient) {
+		this.store.dispatch(shoppingListActions.ingredientAdded(ingredient));
 	}
 
 	addIngredients(newIngredients: Ingredient[]) {
-		const ingredients = this._ingredients$.getValue();
-		ingredients.push(...newIngredients);
-		this._ingredients$.next(ingredients);
+		this.store.dispatch(
+			shoppingListActions.ingredientsAdded({ newIngredients })
+		);
 	}
 
 	selectIngredientForEdit(ingredientId: number) {
-		this._selectedIngredient$.next(ingredientId);
+		this.store.dispatch(
+			shoppingListActions.ingredientSelected({ ingredientId })
+		);
 	}
 
-	updateIngredient(ingredientId: number, newIngredient: Ingredient): boolean {
-		const ingredients = this._ingredients$.value;
-		const ingredientToUpdate = ingredients.find(i => i.id === ingredientId);
-
-		if (ingredientToUpdate) {
-			const index = ingredients.indexOf(ingredientToUpdate);
-			ingredients[index] = newIngredient;
-			this._ingredients$.next(ingredients);
-			this._selectedIngredient$.next(null);
-			return true;
-		}
-
-		return false;
+	updateIngredient(ingredientId: number, newIngredient: Ingredient) {
+		this.store.dispatch(
+			shoppingListActions.ingredientUpdated({ ingredientId, newIngredient })
+		);
 	}
 
 	deleteIngredient(ingredientId: number) {
-		let ingredients = this._ingredients$.value;
-		ingredients = ingredients.filter(
-			ingredient => ingredient.id !== ingredientId
+		this.store.dispatch(
+			shoppingListActions.ingredientDeleted({ ingredientId })
 		);
-		this._ingredients$.next(ingredients);
+	}
+
+	clearSelectedIngredient() {
+		this.store.dispatch(shoppingListActions.selectedIngredientCleared());
 	}
 }

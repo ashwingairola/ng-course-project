@@ -2,26 +2,26 @@ import {
 	Component,
 	ComponentFactoryResolver,
 	Injector,
+	OnDestroy,
 	OnInit,
 	TemplateRef,
 	ViewChild
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { noop, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
 
-import { EAuthError, IAuthResponse } from 'src/app/modules/auth/models';
+import { EAuthError } from 'src/app/modules/auth/models';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { PlaceholderDirective } from 'src/app/modules/shared/directives/placeholder.directive';
 import { AlertComponent } from 'src/app/modules/UI/alert/components/alert/alert.component';
-import { take } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-auth',
 	templateUrl: './auth.component.html',
 	styleUrls: ['./auth.component.css']
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
 	@ViewChild('authForm') authForm!: NgForm;
 	@ViewChild(PlaceholderDirective) alertHost!: PlaceholderDirective;
 	@ViewChild('authErrorAlert') alertContent!: TemplateRef<any>;
@@ -29,16 +29,31 @@ export class AuthComponent implements OnInit {
 	constructor(
 		private componentFactoryResolver: ComponentFactoryResolver,
 		private injector: Injector,
-		private router: Router,
 		private authService: AuthService
 	) {}
 
 	isLoginMode = true;
-	authStatus: 'idle' | 'pending' | 'rejected' | 'fulfilled' = 'idle';
+	authStatus$ = this.authService.authStatus$;
 	authError: EAuthError | null = null;
 	authErrorTypes: typeof EAuthError = EAuthError;
 
-	ngOnInit(): void {}
+	private destroy$ = new Subject<void>();
+
+	ngOnInit(): void {
+		this.authService.authError$
+			.pipe(takeUntil(this.destroy$))
+			.subscribe(error => {
+				this.authError = error;
+
+				if (this.authError) {
+					this.onShowAlert();
+				}
+			}, noop);
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+	}
 
 	onSwitchMode() {
 		this.isLoginMode = !this.isLoginMode;
@@ -52,29 +67,12 @@ export class AuthComponent implements OnInit {
 		const email = this.authForm.value.email;
 		const password = this.authForm.value.password;
 
-		const auth$: Observable<IAuthResponse> = this.isLoginMode
-			? this.authService.login(email, password)
-			: this.authService.signUp(email, password);
-
-		this.authStatus = 'pending';
-		auth$.subscribe(
-			() => {
-				this.authForm.reset();
-				this.authStatus = 'fulfilled';
-				this.authError = null;
-				this.router.navigate(['/']);
-			},
-			(error: EAuthError) => {
-				this.authStatus = 'rejected';
-				this.authError = error;
-				this.onShowAlert();
-			}
-		);
+		if (this.isLoginMode) {
+			this.authService.login(email, password);
+		} else {
+			this.authService.signUp(email, password);
+		}
 	}
-
-	// onHandleError() {
-	// 	this.authError = null;
-	// }
 
 	onShowAlert() {
 		const alertComponentFactory =
