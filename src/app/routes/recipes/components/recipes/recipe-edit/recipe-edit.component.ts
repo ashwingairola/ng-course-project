@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
 import { Ingredient } from 'src/app/models/ingredient.model';
 import { Recipe } from '../../../../../models/recipe.model';
@@ -20,8 +20,9 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 		private recipesService: RecipesService
 	) {}
 
-	private destroySubject$ = new Subject<void>();
+	private _destroy$ = new Subject<void>();
 	editMode = false;
+	selectedRecipe$ = this.recipesService.selectedRecipe$;
 	selectedRecipe?: Recipe | null;
 
 	recipeForm = new FormGroup({});
@@ -33,18 +34,22 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		this.route.paramMap
 			.pipe(
-				takeUntil(this.destroySubject$),
+				takeUntil(this._destroy$),
 				map(params => {
 					const id = params.get('id');
 					const recipeId = id ? +id : null;
 					return recipeId;
 				}),
-				switchMap(recipeId => {
+				tap(recipeId => {
 					return typeof recipeId === 'number'
-						? this.recipesService.getRecipe(recipeId)
+						? this.recipesService.selectRecipe(recipeId)
 						: of(null);
 				})
 			)
+			.subscribe();
+
+		this.selectedRecipe$
+			.pipe(shareReplay(1), takeUntil(this._destroy$))
 			.subscribe(recipe => {
 				this.selectedRecipe = recipe;
 				this.editMode = !!this.selectedRecipe;
@@ -53,7 +58,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy() {
-		this.destroySubject$.next();
+		this._destroy$.next();
+		this._destroy$.complete();
 	}
 
 	onAddIngredient() {

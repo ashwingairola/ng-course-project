@@ -1,9 +1,15 @@
+import { Recipe } from '@models';
 import { EAuthError, TRequestStatus } from '../modules/auth/models';
 import { Ingredient } from './ingredient.model';
 
 export interface ShoppingListState {
 	ingredients: Ingredient[];
 	selectedIngredient: number | null;
+}
+
+export interface RecipeState {
+	recipes: Recipe[];
+	selectedRecipeId: number | null;
 }
 
 export interface AuthState {
@@ -16,5 +22,6 @@ export interface AuthState {
 
 export interface AppState {
 	shoppingList: ShoppingListState;
+	recipe: RecipeState;
 	auth: AuthState;
 }

@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { AuthService } from 'src/app/modules/auth/services/auth.service';
 
 import { Recipe } from '../../../../models/recipe.model';
+import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { RecipesService } from '../../services/recipes.service';
 
 @Component({
@@ -11,7 +10,7 @@ import { RecipesService } from '../../services/recipes.service';
 	styleUrls: ['./recipes.component.css']
 })
 export class RecipesComponent implements OnInit {
-	recipes$?: Observable<Recipe[]>;
+	recipes$ = this.recipeService.recipes$;
 
 	constructor(
 		private recipeService: RecipesService,
@@ -19,11 +18,16 @@ export class RecipesComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.recipes$ = this.recipeService.getRecipes();
 		console.log(this.authService.serviceId);
+
+		this.recipeService.fetchRecipes().subscribe();
 	}
 
 	onClickAddToShoppingList(recipe: Recipe) {
 		this.recipeService.addIngredientsToShoppingList(recipe);
+	}
+
+	onNewButtonClicked() {
+		this.recipeService.deselectRecipe();
 	}
 }

@@ -3,6 +3,7 @@
 		<app-recipe-list
 			*ngIf="recipes$ | async as recipes"
 			[recipes]="recipes"
+			(newButtonClicked)="onNewButtonClicked()"
 		></app-recipe-list>
 	</div>
 	<div class="col-md-7">

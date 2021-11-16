@@ -16,6 +16,7 @@ import { LoggingService } from './services/logging.service';
 import { shoppingListReducer } from './routes/shopping-list/store/reducers/shopping-list.reducer';
 import { authReducer } from './modules/auth/store/reducers/auth.reducer';
 import { AuthEffects } from './modules/auth/store/effects/auth.effects';
+import { recipeReducer } from './routes/recipes/store/reducers/recipe.reducer';
 
 @NgModule({
 	declarations: [AppComponent, HeaderComponent],
@@ -23,6 +24,7 @@ import { AuthEffects } from './modules/auth/store/effects/auth.effects';
 		BrowserModule,
 		HttpClientModule,
 		StoreModule.forRoot({
+			recipe: recipeReducer,
 			shoppingList: shoppingListReducer,
 			auth: authReducer
 		}),

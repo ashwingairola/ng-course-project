@@ -1,21 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { map, switchMap, take } from 'rxjs/operators';
 
+import { AppState } from '@models';
 import { Recipe } from '../../../models/recipe.model';
-import { RecipesService } from './recipes.service';
+import { selectRecipes } from '../store/selectors/recipe.selectors';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class RecipeApiService {
-	constructor(
-		private http: HttpClient,
-		private recipesService: RecipesService
-	) {}
+	constructor(private http: HttpClient, private store: Store<AppState>) {}
+
+	private _recipes$ = this.store.select(selectRecipes);
 
 	storeRecipes() {
-		return this.recipesService.getRecipes().pipe(
+		return this._recipes$.pipe(
 			take(1),
 			switchMap(recipes => {
 				return this.http.put<unknown>(
@@ -40,10 +41,7 @@ export class RecipeApiService {
 
 						return recipe;
 					})
-				),
-				tap(recipes => {
-					this.recipesService.setRecipes(recipes);
-				})
+				)
 			);
 	}
 }
