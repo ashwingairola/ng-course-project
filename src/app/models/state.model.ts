@@ -10,6 +10,8 @@ export interface ShoppingListState {
 export interface RecipeState {
 	recipes: Recipe[];
 	selectedRecipeId: number | null;
+	recipesFetchStatus: TRequestStatus;
+	recipesSaveStatus: TRequestStatus;
 }
 
 export interface AuthState {

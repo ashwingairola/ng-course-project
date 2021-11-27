@@ -13,10 +13,11 @@ import { AuthInterceptor } from './modules/auth/interceptors/auth.interceptor';
 import { AuthModule } from './modules/auth/auth.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { LoggingService } from './services/logging.service';
+import { AuthEffects } from './modules/auth/store/effects/auth.effects';
 import { shoppingListReducer } from './routes/shopping-list/store/reducers/shopping-list.reducer';
 import { authReducer } from './modules/auth/store/reducers/auth.reducer';
-import { AuthEffects } from './modules/auth/store/effects/auth.effects';
 import { recipeReducer } from './routes/recipes/store/reducers/recipe.reducer';
+import { RecipeEffects } from './routes/recipes/store/effects/recipe.effects';
 
 @NgModule({
 	declarations: [AppComponent, HeaderComponent],
@@ -33,7 +34,7 @@ import { recipeReducer } from './routes/recipes/store/reducers/recipe.reducer';
 			logOnly: environment.production,
 			autoPause: true
 		}),
-		EffectsModule.forRoot([AuthEffects]),
+		EffectsModule.forRoot([AuthEffects, RecipeEffects]),
 		AuthModule,
 		SharedModule,
 		AppRoutingModule

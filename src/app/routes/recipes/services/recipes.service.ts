@@ -22,16 +22,15 @@ export class RecipesService {
 
 	constructor(
 		private store: Store<AppState>,
-		private recipeApiService: RecipeApiService,
 		private shoppingListService: ShoppingListService
 	) {}
 
-	fetchRecipes(): Observable<Recipe[]> {
-		return this.recipeApiService.fetchRecipes().pipe(
-			tap(recipes => {
-				this.store.dispatch(RecipeActions.recipesSet({ recipes }));
-			})
-		);
+	fetchRecipes() {
+		this.store.dispatch(RecipeActions.fetchRecipes.fetch());
+	}
+
+	saveRecipes() {
+		this.store.dispatch(RecipeActions.saveRecipes.save());
 	}
 
 	selectRecipe(recipeId: number) {
@@ -40,10 +39,6 @@ export class RecipesService {
 
 	deselectRecipe() {
 		this.store.dispatch(RecipeActions.recipeDeselected());
-	}
-
-	setRecipes(recipes: Recipe[]) {
-		this.store.dispatch(RecipeActions.recipesSet({ recipes }));
 	}
 
 	addIngredientsToShoppingList(recipe: Recipe) {

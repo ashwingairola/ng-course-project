@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { noop } from 'rxjs';
 
-import { RecipeApiService } from '../../routes/recipes/services/recipe-api.service';
 import { AuthService } from '../../modules/auth/services/auth.service';
+import { RecipesService } from 'src/app/routes/recipes/services/recipes.service';
 
 @Component({
 	selector: 'app-header',
@@ -11,7 +10,7 @@ import { AuthService } from '../../modules/auth/services/auth.service';
 })
 export class HeaderComponent implements OnInit {
 	constructor(
-		private recipeApiService: RecipeApiService,
+		private recipeService: RecipesService,
 		private authService: AuthService
 	) {}
 
@@ -20,13 +19,11 @@ export class HeaderComponent implements OnInit {
 	ngOnInit(): void {}
 
 	onSaveData() {
-		this.recipeApiService.storeRecipes().subscribe(response => {
-			console.log(response);
-		}, noop);
+		this.recipeService.saveRecipes();
 	}
 
 	onFetchData() {
-		this.recipeApiService.fetchRecipes().subscribe(noop, noop);
+		this.recipeService.fetchRecipes();
 	}
 
 	onLogout() {

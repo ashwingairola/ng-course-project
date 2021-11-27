@@ -2,10 +2,25 @@ import { createAction, props } from '@ngrx/store';
 
 import { Recipe } from '@models';
 
-export const recipesSet = createAction(
-	'[Recipe] RECIPES_SET',
-	props<{ recipes: Recipe[] }>()
-);
+export const fetchRecipes = {
+	fetch: createAction('[Recipe] RECIPES_FETCH_INITIATED'),
+	pending: createAction('[Recipe] RECIPES_FETCH_PENDING'),
+	rejected: createAction('[Recipe] RECIPES_FETCH_REJECTED'),
+	fulfilled: createAction(
+		'[Recipe] RECIPES_FETCH_FULFILLED',
+		props<{ recipes: Recipe[] }>()
+	)
+};
+
+export const saveRecipes = {
+	save: createAction('[Recipe] RECIPES_SAVE_INITIATED'),
+	pending: createAction('[Recipe] RECIPES_SAVE_PENDING'),
+	rejected: createAction('[Recipe] RECIPES_SAVE_REJECTED'),
+	fulfilled: createAction(
+		'[Recipe] RECIPES_SAVE_FULFILLED',
+		props<{ recipes: Recipe[] }>()
+	)
+};
 
 export const recipeAdded = createAction(
 	'[Recipe] RECIPE_ADDED',

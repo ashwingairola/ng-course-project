@@ -20,7 +20,7 @@ export class RecipesComponent implements OnInit {
 	ngOnInit(): void {
 		console.log(this.authService.serviceId);
 
-		this.recipeService.fetchRecipes().subscribe();
+		this.recipeService.fetchRecipes();
 	}
 
 	onClickAddToShoppingList(recipe: Recipe) {
